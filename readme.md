@@ -64,7 +64,7 @@ var _gaq = _gaq || [];
 
 ### 5. Run your experiment
 
-Publish your code, wait...
+Publish your code, wait for some visitors to come...
 
 ### 6. Analyze your data
 
