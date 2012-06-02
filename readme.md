@@ -12,7 +12,7 @@ Features
    * No need to set anything up server side, the data is stored on Google Analytics
 * Consistent experience: The selected variant is stored in a cookie, so the user will see the same one when coming back
 * No external dependencies: Pure javascript, you just need to include GA
-* Flexibility: You can conduct multiple, independent experiments at the same time. Each experiment will use a custom variable slot
+* Flexible: You can conduct multiple, independent experiments at the same time. Each experiment will use a custom variable slot
 
 Usage
 -----
