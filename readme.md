@@ -52,11 +52,21 @@ var _gaq = _gaq || [];
 <span class="experiment1_class2_name">This text will be replaced too</span>
 ```
 
-### 4. Run your experiment
+### 4. Call applyHtml() on load
+
+```html
+<script type="text/javascript">
+  window.onload = function() {
+    ABalytics.applyHtml();
+  };
+</script>
+```
+
+###54. Run your experiment
 
 Publish your code, wait...
 
-### 5. Analyze your data
+### 6. Analyze your data
 
 ABalytics works best if you defined some goals on Google Analytics.
 
