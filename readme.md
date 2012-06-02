@@ -8,7 +8,7 @@ Usage
 
 ### 1. Include abalytics.js
 ```html
-<script type="text/javascript" src="abalytics.js"> </script>
+<script type="text/javascript" src="abalytics.js"></script>
 ```
 ### 2. Define your tests and configure GA
 ```javascript
