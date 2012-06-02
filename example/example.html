@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <title>ABalytics simple test</title>
+
+  <script type="text/javascript" src="../abalytics.js"> </script>
+
+  <script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-XXXXXXXX-XX']);
+    _gaq.push(['_trackPageview']);
+
+    _gaq = _gaq.concat(ABalytics.init({
+      click_button_intro: [
+        {
+          name: 'ab_compel',
+          "ab_test1": "This text will compel you to click the button below!"
+        },
+        {
+          name: 'ab_convince',
+          "ab_test1": "This text will convince you to click the button below!"
+        }
+      ]
+    }));
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+
+  </script>
+</head>
+<body>
+  <h1>This is a very interesting A/B test</h1>
+
+  <p class="ab_test1">
+    The user will never see this
+  </p>
+
+  <button>Goal button</button>
+
+  <script type="text/javascript">
+    window.onload = function() {
+      ABalytics.applyHtml();
+    };
+  </script>
+</body>
+</html>
