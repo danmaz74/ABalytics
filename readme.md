@@ -7,9 +7,9 @@ Features
 --------
 
 *  Easy to set up
-** You just list the possible variants, the randomization is handled automatically
-** You just mark the html elements you want to test on with a class, the substitution is automatic
-** No need to set anything up server side, the data is stored on Google Analytics
+   * You just list the possible variants, the randomization is handled automatically
+   * You just mark the html elements you want to test on with a class, the substitution is automatic
+   * No need to set anything up server side, the data is stored on Google Analytics
 * Consistent experience: The selected variant is stored in a cookie, so the user will see the same one when coming back
 * No external dependencies: Pure javascript, you just need to include GA
 * Flexibility: You can conduct multiple, independent experiments at the same time. Each experiment will use a custom variable slot
