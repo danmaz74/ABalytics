@@ -62,7 +62,7 @@ var _gaq = _gaq || [];
 </script>
 ```
 
-###54. Run your experiment
+### 5. Run your experiment
 
 Publish your code, wait...
 
