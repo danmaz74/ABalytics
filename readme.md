@@ -1,5 +1,5 @@
 ABalytics.js: pure javascript + Google Analytics A/B testing library
-###################################################
+====================================================================
 
 This pure javascript library allows you to do simple A/B testing *without having to set anything up server-side*. All data is registered as custom variables in your website Google Analytics profile.
 
