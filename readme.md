@@ -56,8 +56,10 @@ Click on the experiment name you want to analyze to see how many visits where re
 Advanced options
 ----------------
 
-If you are already using some custom variables, you can have ABalytics start from a slot > 1 using ABalytics.init({...}, start_slot)
-
+If you are already using some custom variables, you can have ABalytics start from a slot > 1 using
+```javascript
+ABalytics.init({...}, YOUR_FIRST_FREE_SLOT);
+```
 License
 -------
 
