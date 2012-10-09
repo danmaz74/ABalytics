@@ -17,7 +17,7 @@
 
 var ABalytics = {
     changes: [],
-    // for each experiment, load a variant if already saved, or pick a random one
+    // for each experiment, load a variant if already saved for this session, or pick a random one
     init: function(config, start_slot) {
         if (typeof(start_slot) == 'undefined') start_slot = 1;
 
