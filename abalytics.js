@@ -31,7 +31,6 @@ var ABalytics = {
             if (!variant_id || !variants[variant_id]) {
                 // pick a random variant
                 variant_id = Math.floor(Math.random()*variants.length);
-                console.log("random variant_id: "+variant_id);
                 document.cookie = "ABalytics_"+experiment+"="+variant_id+"; path=/";
             }
 
