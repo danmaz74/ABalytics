@@ -74,6 +74,8 @@ In GA, go to Audience->Custom->Custom Variables. You will find your experiements
 
 Click on the experiment name you want to analyze to see how many visits where recorded for each variant. Then click on "Goal set 1" to see the goal conversion rate for each variant. Simple and easy!
 
+![GA screenshot](https://raw.github.com/danmaz74/ABalytics/master/screenshots/abalytics.png "Results on Google Analytics")
+
 Advanced options
 ----------------
 
