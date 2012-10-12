@@ -52,7 +52,17 @@ var _gaq = _gaq || [];
 <span class="experiment1_class2_name">This text will be replaced too</span>
 ```
 
-### 4. Call applyHtml() on load
+### 4. If you have jQuery, call applyHtml() on when the document is ready! (recommended)
+
+```html
+<script type="text/javascript">
+  $(function () {
+    ABalytics.applyHtml();
+  });
+</script>
+```
+
+### 4.2 If you don't have jQuery; call applyHtml() on load
 
 ```html
 <script type="text/javascript">
@@ -61,6 +71,8 @@ var _gaq = _gaq || [];
   };
 </script>
 ```
+
+Note: Waiting for onload might cause your variants to perform more poorly from the [FOUC](http://en.wikipedia.org/wiki/Flash_of_unstyled_content) type flicker your user will experience.
 
 ### 5. Run your experiment
 
