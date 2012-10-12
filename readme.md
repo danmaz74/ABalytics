@@ -24,25 +24,33 @@ Usage
 ### 2. Define your tests and configure GA
 ```javascript
 var _gaq = _gaq || [];
-      _gaq.push(['_setAccount', 'UA-XXXXXXXX-XX']);
-      _gaq.push(['_trackPageview']);
+_gaq.push(['_setAccount', 'UA-XXXXXXXX-XX']);
 
-      _gaq = _gaq.concat(ABalytics.init({
-        experiment1_name: [
-          {
-            name: 'variant1_name',
-            "experiment1_class1_name": "<strong>Html content for variant 1 class 1</strong>",
-            "experiment1_class2_name": "Html content for variant 1 class 2"
-          },
-          {
-            name: 'variant2_name',
-            "experiment1_class1_name": "<strong>Html content for variant 2 class 1</strong>",
-            "experiment1_class2_name": "Html content for variant 2 class 2"
-          }
-        ],
-        experiment2_name: [ ...
-      }));
+_gaq = _gaq.concat(ABalytics.init({
+  experiment1_name: [
+    {
+      name: 'variant1_name',
+      "experiment1_class1_name": "<strong>Html content for variant 1 class 1</strong>",
+      "experiment1_class2_name": "Html content for variant 1 class 2"
+    },
+    {
+      name: 'variant2_name',
+      "experiment1_class1_name": "<strong>Html content for variant 2 class 1</strong>",
+      "experiment1_class2_name": "Html content for variant 2 class 2"
+    }
+  ],
+  experiment2_name: [ ...
+}));
+
+_gaq.push(['_trackPageview']);
 ```
+
+Note: In order for custom variables to work, you have to call _trackPageview after they are set.
+
+> **Call the _setCustomVar() function when it can be set prior to a pageview or event GIF request.**  
+> In certain cases this might not be possible, and you will need to set another _trackPageview() request after setting a custom variable. This is typically only necessary in those situations where the user triggers a session- or visit-level custom var, where it is not possible to bundle that method with a pageview, event, or ecommerce tracking call.  
+> Source: [Dev Docs on Custom Variables](https://developers.google.com/analytics/devguides/collection/gajs/gaTrackingCustomVariables) by Google
+
 ### 3. Apply the experiment classes to your html content
 ```html
 <div class="experiment1_class1_name">

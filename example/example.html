@@ -10,7 +10,6 @@
 
     var _gaq = _gaq || [];
     _gaq.push(['_setAccount', 'UA-XXXXXXXX-XX']);
-    _gaq.push(['_trackPageview']);
 
     _gaq = _gaq.concat(ABalytics.init({
       click_button_intro: [
@@ -24,6 +23,8 @@
         }
       ]
     }));
+
+    _gaq.push(['_trackPageview']);
 
     (function() {
       var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
