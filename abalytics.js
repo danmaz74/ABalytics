@@ -3,6 +3,8 @@
 // The MIT License (MIT)
 // Copyright (c) 2012 Daniele Mazzini - https://github.com/danmaz74
 //
+// Version: 1.1
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
 // files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
 // modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software
@@ -18,10 +20,8 @@
 var ABalytics = {
     changes: [],
     // for each experiment, load a variant if already saved for this session, or pick a random one
-    init: function(config, start_slot) {
+    init: function(config, __gaq, start_slot) {
         if (typeof(start_slot) == 'undefined') start_slot = 1;
-
-        var ret = [];
 
         for (var experiment in config) {
             var variants = config[experiment];
@@ -36,7 +36,9 @@ var ABalytics = {
 
             var variant = variants[variant_id];
 
-            ret.push(['_setCustomVar',
+            // ga.js changes _gaq into an object with a custom push() method but no concat,
+            // so we have to push each _setCustomVar individually
+            __gaq.push(['_setCustomVar',
                 start_slot,
                 experiment,                 // The name of the custom variable = name of the experiment
                 variant.name,               // The value of the custom variable = variant shown
@@ -47,8 +49,6 @@ var ABalytics = {
             for (var change in variant) {
                 if (change != 'name') this.changes.push([change,variant[change]]);
             }
-
-            return ret;
         }
     },
     // apply the selected variants for each experiment

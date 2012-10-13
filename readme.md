@@ -25,23 +25,25 @@ Usage
 ```javascript
 var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-XXXXXXXX-XX']);
+
+      ABalytics.init({
+              experiment1_name: [
+                {
+                  name: 'variant1_name',
+                  "experiment1_class1_name": "<strong>Html content for variant 1 class 1</strong>",
+                  "experiment1_class2_name": "Html content for variant 1 class 2"
+                },
+                {
+                  name: 'variant2_name',
+                  "experiment1_class1_name": "<strong>Html content for variant 2 class 1</strong>",
+                  "experiment1_class2_name": "Html content for variant 2 class 2"
+                }
+              ],
+              experiment2_name: [ ...
+            }, _gaq);
+
       _gaq.push(['_trackPageview']);
 
-      _gaq = _gaq.concat(ABalytics.init({
-        experiment1_name: [
-          {
-            name: 'variant1_name',
-            "experiment1_class1_name": "<strong>Html content for variant 1 class 1</strong>",
-            "experiment1_class2_name": "Html content for variant 1 class 2"
-          },
-          {
-            name: 'variant2_name',
-            "experiment1_class1_name": "<strong>Html content for variant 2 class 1</strong>",
-            "experiment1_class2_name": "Html content for variant 2 class 2"
-          }
-        ],
-        experiment2_name: [ ...
-      }));
 ```
 ### 3. Apply the experiment classes to your html content
 ```html
@@ -62,6 +64,8 @@ var _gaq = _gaq || [];
 </script>
 ```
 
+NB: If you're using jQuery in your website, it's even better to call applyHtml in the $(document).ready(...) handler
+
 ### 5. Run your experiment
 
 Publish your code, wait for some visitors to come...
@@ -81,7 +85,7 @@ Advanced options
 
 If you are already using some custom variables, you can have ABalytics start from a slot > 1 using
 ```javascript
-ABalytics.init({...}, YOUR_FIRST_FREE_SLOT);
+ABalytics.init({...}, _gaq, YOUR_FIRST_FREE_SLOT);
 ```
 License
 -------

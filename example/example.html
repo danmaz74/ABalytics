@@ -10,20 +10,22 @@
 
     var _gaq = _gaq || [];
     _gaq.push(['_setAccount', 'UA-XXXXXXXX-XX']);
+
+    ABalytics.init({
+        click_button_intro: [
+            {
+                name: 'ab_compel',
+                "ab_test1": "This text will compel you to click the button below!"
+            },
+            {
+                name: 'ab_convince',
+                "ab_test1": "This text will convince you to click the button below!"
+            }
+        ]}, _gaq);
+
     _gaq.push(['_trackPageview']);
 
-    _gaq = _gaq.concat(ABalytics.init({
-      click_button_intro: [
-        {
-          name: 'ab_compel',
-          "ab_test1": "This text will compel you to click the button below!"
-        },
-        {
-          name: 'ab_convince',
-          "ab_test1": "This text will convince you to click the button below!"
-        }
-      ]
-    }));
+
 
     (function() {
       var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
