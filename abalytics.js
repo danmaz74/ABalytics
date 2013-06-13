@@ -77,7 +77,7 @@ var ABalytics = {
         var results = [];
 
         var element;
-        for (var i = 0; (element = allElements[i]) != null) && (element != undefined); i++) {
+        for (var i = 0; ((element = allElements[i]) != null) && (element != undefined); i++) {
             var elementClass = element.className;
             if (elementClass && elementClass.indexOf(className) != -1 && hasClassName.test(elementClass))
                 results.push(element);
