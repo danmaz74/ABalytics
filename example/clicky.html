@@ -1,0 +1,48 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <title>ABalytics simple test</title>
+
+  <script type="text/javascript" src="../abalytics.js"> </script>
+
+  <script type="text/javascript">
+
+    var clicky_custom = clicky_custom || [];
+
+    ABalytics.init({
+        click_button_intro: [
+            {
+                name: 'ab_compel',
+                "ab_test1": "This text will compel you to click the button below!"
+            },
+            {
+                name: 'ab_convince',
+                "ab_test1": "This text will convince you to click the button below!"
+            }
+        ]}, ['Clicky', clicky_custom]);
+
+  </script>
+  <script src="//getclicky.dev/js" type="text/javascript"></script>
+  <script type="text/javascript">try{ clicky.init(XXXXXXXX); }catch(e){}</script>
+</head>
+<body>
+  <h1>This is a very interesting A/B test</h1>
+
+  <p class="ab_test1">
+    The user will never see this
+  </p>
+
+    <p style="color: blue;">
+        A very good system
+    </p>
+
+  <button>Goal button</button>
+
+  <script type="text/javascript">
+    window.onload = function() {
+      ABalytics.applyHtml();
+    };
+  </script>
+</body>
+</html>
