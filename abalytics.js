@@ -19,9 +19,22 @@
 
 var ABalytics = {
     changes: [],
+    to: {},
     // for each experiment, load a variant if already saved for this session, or pick a random one
-    init: function(config, __gaq, start_slot) {
+    init: function(config, __to, start_slot, analytics_service) {
         if (typeof(start_slot) == 'undefined') start_slot = 1;
+
+        // tracking object
+        this.to = __to;
+
+        switch (analytics_service) {
+            case 'Clicky':
+                this.amend = this.amendClicky;
+                break;
+            default:
+                this.amend = this.amendGoogle;
+                break;
+        }
 
         for (var experiment in config) {
             var variants = config[experiment];
@@ -36,20 +49,36 @@ var ABalytics = {
 
             var variant = variants[variant_id];
 
-            // ga.js changes _gaq into an object with a custom push() method but no concat,
-            // so we have to push each _setCustomVar individually
-            __gaq.push(['_setCustomVar',
-                start_slot,
+            this.amend(start_slot,
                 experiment,                 // The name of the custom variable = name of the experiment
                 variant.name,               // The value of the custom variable = variant shown
                 2                           // Sets the scope to session-level
-            ]);
+            );
+
             start_slot++;
 
             for (var change in variant) {
                 if (change != 'name') this.changes.push([change,variant[change]]);
             }
         }
+    },
+    // Clicky-specific amend procedure
+    amendClicky: function(slot, exp, var_name, scope) {
+        this.to.split = {
+            name: exp,
+            version: var_name,
+        };
+    },
+    // Default, Google-specific amend procedure
+    amendGoogle: function(slot, exp, var_name, scope) {
+        // ga.js changes _gaq into an object with a custom push() method but no concat,
+        // so we have to push each _setCustomVar individually
+        this.to.push(['_setCustomVar',
+            slot,
+            exp,
+            var_name,
+            scope
+        ]);
     },
     // apply the selected variants for each experiment
     applyHtml: function() {
