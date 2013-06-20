@@ -19,24 +19,22 @@
 
 var ABalytics = {
     changes: [],
-    cont: {},
+    to: {},
     // for each experiment, load a variant if already saved for this session, or pick a random one
-    init: function(config, __cont, start_slot) {
+    init: function(config, __to, start_slot, analytics_service) {
         if (typeof(start_slot) == 'undefined') start_slot = 1;
 
-        this.cont = __cont;
+        // tracking object
+        this.to = __to;
 
-        if (this.cont.length !== 2)
-            return;
-
-        if (this.cont[0] == 'Clicky')
-            this.amend = this.amendClicky;
-        else if (this.cont[0] == 'Google')
-            this.amend = this.amendGoogle;
-        else
-            return;
-
-        this.cont = this.cont[1];
+        switch (analytics_service) {
+            case 'Clicky':
+                this.amend = this.amendClicky;
+                break;
+            default:
+                this.amend = this.amendGoogle;
+                break;
+        }
 
         for (var experiment in config) {
             var variants = config[experiment];
@@ -64,17 +62,18 @@ var ABalytics = {
             }
         }
     },
-    // Clicky-specific amend
+    // Clicky-specific amend procedure
     amendClicky: function(slot, exp, var_name, scope) {
-        this.cont.split = {
+        this.to.split = {
             name: exp,
             version: var_name,
         };
     },
+    // Default, Google-specific amend procedure
     amendGoogle: function(slot, exp, var_name, scope) {
         // ga.js changes _gaq into an object with a custom push() method but no concat,
         // so we have to push each _setCustomVar individually
-        this.cont.push(['_setCustomVar',
+        this.to.push(['_setCustomVar',
             slot,
             exp,
             var_name,
