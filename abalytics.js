@@ -18,75 +18,105 @@
 // OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 var ABalytics = (function (window, document, undefined) {
+    /* exported ABalytics */
+
+    var readCookie = function (name) {
+        var nameEQ = name + '=',
+            ca = document.cookie.split(';'),
+            i,
+            c;
+        for (i = 0; i < ca.length; i++) {
+            c = ca[i];
+            while (c.charAt(0) === ' ') {
+                c = c.substring(1, c.length);
+            }
+            if (c.indexOf(nameEQ) === 0) {
+                return c.substring(nameEQ.length, c.length);
+            }
+        }
+        return null;
+    };
+
+    var getElementsByClassName = function (className) {
+        var hasClassName = new RegExp('(?:^|\\s)' + className + '(?:$|\\s)'),
+            allElements = document.getElementsByTagName('*'),
+            results = [],
+            element,
+            elementClass,
+            i = 0;
+
+        for (i = 0;
+            ((element = allElements[i]) !== null) && (element !== undefined); i++) {
+            elementClass = element.className;
+            if (elementClass && elementClass.indexOf(className) !== -1 && hasClassName.test(
+                elementClass)) {
+                results.push(element);
+            }
+        }
+
+        return results;
+    };
+
     return {
         changes: [],
         // for each experiment, load a variant if already saved for this session, or pick a random one
-        init: function (config, __gaq, start_slot) {
-            if (typeof (start_slot) == 'undefined') start_slot = 1;
+        init: function (config, __gaq, startSlot) {
+            var experiment,
+                variants,
+                variant,
+                variantId,
+                change;
 
-            for (var experiment in config) {
-                var variants = config[experiment];
+            if (typeof (startSlot) === 'undefined') {
+                startSlot = 1;
+            }
+
+            for (experiment in config) {
+                variants = config[experiment];
 
                 // read the saved variant for this experiment in this session, or pick a random one and save it
-                var variant_id = this.readCookie("ABalytics_" + experiment);
-                if (!variant_id || !variants[variant_id]) {
+                variantId = readCookie('ABalytics_' + experiment);
+                if (!variantId || !variants[variantId]) {
                     // pick a random variant
-                    variant_id = Math.floor(Math.random() * variants.length);
-                    document.cookie = "ABalytics_" + experiment + "=" + variant_id + "; path=/";
+                    variantId = Math.floor(Math.random() * variants.length);
+                    document.cookie = 'ABalytics_' + experiment + '=' + variantId + '; path=/';
                 }
 
-                var variant = variants[variant_id];
+                variant = variants[variantId];
 
                 // ga.js changes _gaq into an object with a custom push() method but no concat,
                 // so we have to push each _setCustomVar individually
                 __gaq.push(['_setCustomVar',
-                    start_slot,
+                    startSlot,
                     experiment, // The name of the custom variable = name of the experiment
                     variant.name, // The value of the custom variable = variant shown
                     2 // Sets the scope to session-level
                 ]);
-                start_slot++;
+                startSlot++;
 
-                for (var change in variant) {
-                    if (change != 'name') this.changes.push([change, variant[change]]);
+                for (change in variant) {
+                    if (change !== 'name') {
+                        this.changes.push([change, variant[change]]);
+                    }
                 }
             }
         },
         // apply the selected variants for each experiment
         applyHtml: function () {
-            for (var i = 0; i < this.changes.length; i++) {
-                var change = this.changes[i];
-                var elements = document.getElementsByClassName ? document.getElementsByClassName(
-                    change[0]) : this.getElementsByClassName(change[0]);
+            var elements,
+                change,
+                i,
+                j;
 
-                for (var j = 0; j < elements.length; j++) elements[j].innerHTML = change[1];
-            }
-        },
-        readCookie: function (name) {
-            var nameEQ = name + "=";
-            var ca = document.cookie.split(';');
-            for (var i = 0; i < ca.length; i++) {
-                var c = ca[i];
-                while (c.charAt(0) == ' ') c = c.substring(1, c.length);
-                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
-            }
-            return null;
-        },
-        getElementsByClassName: function (className) {
-            var hasClassName = new RegExp("(?:^|\\s)" + className + "(?:$|\\s)");
-            var allElements = document.getElementsByTagName("*");
-            var results = [];
+            for (i = 0; i < this.changes.length; i++) {
+                change = this.changes[i];
+                elements = document.getElementsByClassName ? document.getElementsByClassName(
+                    change[0]) : getElementsByClassName(change[0]);
 
-            var element;
-            for (var i = 0;
-                ((element = allElements[i]) != null) && (element != undefined); i++) {
-                var elementClass = element.className;
-                if (elementClass && elementClass.indexOf(className) != -1 && hasClassName.test(
-                    elementClass))
-                    results.push(element);
+                for (j = 0; j < elements.length; j++) {
+                    elements[j].innerHTML = change[1];
+                }
             }
-
-            return results;
         }
     };
 })(window, document);
