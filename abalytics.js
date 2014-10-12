@@ -20,6 +20,26 @@
 var ABalytics = (function (window, document, undefined) {
     /* exported ABalytics */
 
+    // Returns a classic or universal analytics wrapper object
+    var analyticsWrapper = function (ga, gaq) {
+        if (!ga && !gaq) {
+            throw new ReferenceError('ABalytics - ga or _gaq not found.');
+        }
+        this.ga = ga;
+        this.gaq = gaq;
+    };
+
+    analyticsWrapper.prototype.push = function (experimentName, variantName, slot) {
+        // prefer ga to _gaq if both are defined
+        if (this.ga) {
+            // https://developers.google.com/analytics/devguides/collection/analyticsjs/custom-dims-mets
+            this.ga('set', 'dimension' + slot, variantName);
+        } else {
+            // https://developers.google.com/analytics/devguides/collection/gajs/gaTrackingCustomVariables
+            this.gaq.push(['_setCustomVar', slot, experimentName, variantName, 2]);
+        }
+    };
+
     var readCookie = function (name) {
         var nameEQ = name + '=',
             ca = document.cookie.split(';'),
@@ -60,15 +80,17 @@ var ABalytics = (function (window, document, undefined) {
     return {
         changes: [],
         // for each experiment, load a variant if already saved for this session, or pick a random one
-        init: function (config, __gaq, startSlot) {
-            var experiment,
+        // slot can either be a dimension or a custom variable
+        init: function (config, slot) {
+            var gaWrapper = new analyticsWrapper(window.ga, window._gaq),
+                experiment,
                 variants,
                 variant,
                 variantId,
                 change;
 
-            if (typeof (startSlot) === 'undefined') {
-                startSlot = 1;
+            if (typeof (slot) === 'undefined') {
+                slot = 1;
             }
 
             for (experiment in config) {
@@ -84,21 +106,14 @@ var ABalytics = (function (window, document, undefined) {
 
                 variant = variants[variantId];
 
-                // ga.js changes _gaq into an object with a custom push() method but no concat,
-                // so we have to push each _setCustomVar individually
-                __gaq.push(['_setCustomVar',
-                    startSlot,
-                    experiment, // The name of the custom variable = name of the experiment
-                    variant.name, // The value of the custom variable = variant shown
-                    2 // Sets the scope to session-level
-                ]);
-                startSlot++;
+                gaWrapper.push(experiment, variant.name, slot);
 
                 for (change in variant) {
                     if (change !== 'name') {
                         this.changes.push([change, variant[change]]);
                     }
                 }
+                slot++;
             }
         },
         // apply the selected variants for each experiment
