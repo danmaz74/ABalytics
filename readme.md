@@ -1,18 +1,19 @@
-ABalytics.js: pure js + Google Analytics A/B testing
+ABalytics.js: pure js + Universal Analytics A/B testing
 ====================================================================
 
-This pure javascript library allows you to do simple A/B testing working only on your client-side code. All data is registered as custom variables in your website Google Analytics profile, so **you don't need to configure anything server side**.
+This pure javascript library allows you to do simple A/B testing working only on your client-side code. All of the experiment data is registered as custom variables/dimensions in your Google Analytics profile, so **you don't need to configure anything server side**.
 
 Features
 --------
 
 *  Easy to set up
-   * You just list the possible variants, the randomization is handled automatically
-   * You just mark the html elements you want to test on with a class, the substitution is automatic
-   * No need to set anything up server side, the data is stored on Google Analytics
+   * You just list the possible variants, randomization is handled automatically
+   * You just mark the html elements you want to test on with a class, substitution happens automatically
+   * No need to set anything up server side, the data is stored in Google Analytics
 * Consistent user experience: The selected variant is stored in a cookie, so the user will see the same one when coming back
-* No external dependencies: Pure javascript, you just need to include GA
-* Flexible: You can conduct multiple, independent experiments at the same time. Each experiment will use a custom variable slot
+* No external dependencies: Pure javascript, you just need to include the *GA* or *UA* tracking code
+* Flexible: You can conduct multiple, independent experiments at the same time. Each experiment will use a different custom variable/dimension
+* Supports universal and classic analytics
 
 Usage
 -----
@@ -23,8 +24,7 @@ Usage
 ```
 ### 2. Define your tests and configure GA
 ```javascript
-var _gaq = _gaq || [];
-      _gaq.push(['_setAccount', 'UA-XXXXXXXX-XX']);
+// Initialize GA or UA trackers
 
       ABalytics.init({
               experiment1_name: [
@@ -40,10 +40,9 @@ var _gaq = _gaq || [];
                 }
               ],
               experiment2_name: [ ...
-            }, _gaq);
+            });
 
-      _gaq.push(['_trackPageview']);
-
+// Send pageview tracking call
 ```
 ### 3. Apply the experiment classes to your html content
 ```html
@@ -64,7 +63,7 @@ var _gaq = _gaq || [];
 </script>
 ```
 
-NB: If you're using jQuery in your website, it's even better to call applyHtml in the $(document).ready(...) handler
+NB: If you're using jQuery in your website, it's even better to call ```applyHtml``` in the ```$(document).ready(...)``` handler
 
 ### 5. Run your experiment
 
@@ -74,19 +73,25 @@ Publish your code, wait for some visitors to come...
 
 ABalytics works best if you defined some goals on Google Analytics.
 
-In GA, go to Audience->Custom->Custom Variables. You will find your experiements names in the available slots.
+For GA, go to Audience->Custom->Custom Variables. You will find your experiements names in the available slots.
 
-Click on the experiment name you want to analyze to see how many visits where recorded for each variant. Then click on "Goal set 1" to see the goal conversion rate for each variant. Simple and easy!
+Click on the experiment name you want to analyze to see how many visits were recorded for each variant. Then click on "Goal set 1" to see the goal conversion rate for each variant. Simple and easy!
 
 ![GA screenshot](https://raw.github.com/danmaz74/ABalytics/master/screenshots/abalytics.png "Results on Google Analytics")
+
+In UA,  assuming that you have created a custom dimension in
+Admin->Custom Definitions->Custom Dimensions, you can view the data related to your experiment in a *Custom Report*.
 
 Advanced options
 ----------------
 
-If you are already using some custom variables, you can have ABalytics start from a slot > 1 using
+If you are already using some custom variables/dimensions, you can have ABalytics start from a slot > 1 using
 ```javascript
-ABalytics.init({...}, _gaq, YOUR_FIRST_FREE_SLOT);
+ABalytics.init({...}, SLOT);
 ```
+Caveats
+-------
+* In order for the custom variables/dimensions to be pushed to the *Google Analytics* servers, it's necessary for the *pageview* tracking call to be sent after the ***Abalytics.init()*** method has been invoked. Otherwise you will need to create a custom nonInteractive *event* tracking call to send the data.
 
 License
 -------
