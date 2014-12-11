@@ -17,72 +17,121 @@
 // BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF
 // OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-var ABalytics = {
-    changes: [],
-    // for each experiment, load a variant if already saved for this session, or pick a random one
-    init: function(config, __gaq, start_slot) {
-        if (typeof(start_slot) == 'undefined') start_slot = 1;
+var ABalytics = (function (window, document, undefined) {
+    /* exported ABalytics */
 
-        for (var experiment in config) {
-            var variants = config[experiment];
-
-            // read the saved variant for this experiment in this session, or pick a random one and save it
-            var variant_id = this.readCookie("ABalytics_"+experiment);
-            if (!variant_id || !variants[variant_id]) {
-                // pick a random variant
-                variant_id = Math.floor(Math.random()*variants.length);
-                document.cookie = "ABalytics_"+experiment+"="+variant_id+"; path=/";
-            }
-
-            var variant = variants[variant_id];
-
-            // ga.js changes _gaq into an object with a custom push() method but no concat,
-            // so we have to push each _setCustomVar individually
-            __gaq.push(['_setCustomVar',
-                start_slot,
-                experiment,                 // The name of the custom variable = name of the experiment
-                variant.name,               // The value of the custom variable = variant shown
-                2                           // Sets the scope to session-level
-            ]);
-            start_slot++;
-
-            for (var change in variant) {
-                if (change != 'name') this.changes.push([change,variant[change]]);
-            }
+    // Returns a classic or universal analytics wrapper object
+    var analyticsWrapper = function (ga, gaq) {
+        if (!ga && !gaq) {
+            throw new ReferenceError('ABalytics - ga or _gaq not found.');
         }
-    },
-    // apply the selected variants for each experiment
-    applyHtml: function() {
-        for (var i=0;i<this.changes.length;i++) {
-            var change = this.changes[i];
-            var elements = document.getElementsByClassName ? document.getElementsByClassName(change[0]) : this.getElementsByClassName(change[0]);
+        this.ga = ga;
+        this.gaq = gaq;
+    };
 
-            for (var j=0;j<elements.length;j++) elements[j].innerHTML = change[1];
+    analyticsWrapper.prototype.push = function (experimentName, variantName, slot) {
+        // prefer ga to _gaq if both are defined
+        if (this.ga) {
+            // https://developers.google.com/analytics/devguides/collection/analyticsjs/custom-dims-mets
+            this.ga('set', 'dimension' + slot, variantName);
+        } else {
+            // https://developers.google.com/analytics/devguides/collection/gajs/gaTrackingCustomVariables
+            this.gaq.push(['_setCustomVar', slot, experimentName, variantName, 2]);
         }
-    },
-    readCookie: function(name) {
-        var nameEQ = name + "=";
-        var ca = document.cookie.split(';');
-        for(var i=0;i < ca.length;i++) {
-            var c = ca[i];
-            while (c.charAt(0)==' ') c = c.substring(1,c.length);
-            if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+    };
+
+    var readCookie = function (name) {
+        var nameEQ = name + '=',
+            ca = document.cookie.split(';'),
+            i,
+            c;
+        for (i = 0; i < ca.length; i++) {
+            c = ca[i];
+            while (c.charAt(0) === ' ') {
+                c = c.substring(1, c.length);
+            }
+            if (c.indexOf(nameEQ) === 0) {
+                return c.substring(nameEQ.length, c.length);
+            }
         }
         return null;
-    },
-    getElementsByClassName: function(className)
-    {
-        var hasClassName = new RegExp("(?:^|\\s)" + className + "(?:$|\\s)");
-        var allElements = document.getElementsByTagName("*");
-        var results = [];
+    };
 
-        var element;
-        for (var i = 0; ((element = allElements[i]) != null) && (element != undefined); i++) {
-            var elementClass = element.className;
-            if (elementClass && elementClass.indexOf(className) != -1 && hasClassName.test(elementClass))
+    var getElementsByClassName = function (className) {
+        var hasClassName = new RegExp('(?:^|\\s)' + className + '(?:$|\\s)'),
+            allElements = document.getElementsByTagName('*'),
+            results = [],
+            element,
+            elementClass,
+            i = 0;
+
+        for (i = 0;
+            ((element = allElements[i]) !== null) && (element !== undefined); i++) {
+            elementClass = element.className;
+            if (elementClass && elementClass.indexOf(className) !== -1 && hasClassName.test(
+                elementClass)) {
                 results.push(element);
+            }
         }
 
         return results;
-    }
-};
+    };
+
+    return {
+        changes: [],
+        // for each experiment, load a variant if already saved for this session, or pick a random one
+        // slot can either be a dimension or a custom variable
+        init: function (config, slot) {
+            var gaWrapper = new analyticsWrapper(window.ga, window._gaq),
+                experiment,
+                variants,
+                variant,
+                variantId,
+                change;
+
+            if (typeof (slot) === 'undefined') {
+                slot = 1;
+            }
+
+            for (experiment in config) {
+                variants = config[experiment];
+
+                // read the saved variant for this experiment in this session, or pick a random one and save it
+                variantId = readCookie('ABalytics_' + experiment);
+                if (!variantId || !variants[variantId]) {
+                    // pick a random variant
+                    variantId = Math.floor(Math.random() * variants.length);
+                    document.cookie = 'ABalytics_' + experiment + '=' + variantId + '; path=/';
+                }
+
+                variant = variants[variantId];
+
+                gaWrapper.push(experiment, variant.name, slot);
+
+                for (change in variant) {
+                    if (change !== 'name') {
+                        this.changes.push([change, variant[change]]);
+                    }
+                }
+                slot++;
+            }
+        },
+        // apply the selected variants for each experiment
+        applyHtml: function () {
+            var elements,
+                change,
+                i,
+                j;
+
+            for (i = 0; i < this.changes.length; i++) {
+                change = this.changes[i];
+                elements = document.getElementsByClassName ? document.getElementsByClassName(
+                    change[0]) : getElementsByClassName(change[0]);
+
+                for (j = 0; j < elements.length; j++) {
+                    elements[j].innerHTML = change[1];
+                }
+            }
+        }
+    };
+})(window, document);

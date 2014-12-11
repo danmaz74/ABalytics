@@ -1,0 +1,12 @@
+// Look at http://www.jshint.com/docs/options/ for more info.
+{
+  "browser": true,
+  "curly": true,
+  "eqeqeq": true,
+  "expr": true,
+  "immed": true,
+  "quotmark": "single",
+  "camelcase": true,
+  "undef": true,
+  "unused": true
+}
