@@ -129,7 +129,13 @@ var ABalytics = (function (window, document, undefined) {
                     change[0]) : getElementsByClassName(change[0]);
 
                 for (j = 0; j < elements.length; j++) {
-                    elements[j].innerHTML = change[1];
+                    if (typeof change[1] == 'boolean') {
+                        elements[j].style.display = (change[1] ? '' : 'none');
+                    } else if (typeof change[1] == 'function') {
+                        change[1](elements[j]);
+                    } else {
+                        elements[j].innerHTML = change[1];
+                    }
                 }
             }
         }
